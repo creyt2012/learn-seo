@@ -6,6 +6,12 @@ import os
 
 app = Flask(__name__)
 port = 8229
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=port)
 
 # Hàm tạo key ngẫu nhiên
 def generate_random_key():
