@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Website Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Your Website Content</h1>
+
+        <!-- Form to initiate an attack -->
+        <form id="attackForm">
+            <div class="form-group">
+                <label for="host">Host:</label>
+                <input type="text" class="form-control" id="host" required>
+            </div>
+            <div class="form-group">
+                <label for="time">Time (seconds):</label>
+                <input type="number" class="form-control" id="time" required>
+            </div>
+            <div class="form-group">
+                <label for="method">Attack Method:</label>
+                <input type="text" class="form-control" id="method" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Start Attack</button>
+        </form>
+
+        <!-- Attack status display -->
+        <div id="attackStatus" class="mt-5">
+            <h4>Attack Status:</h4>
+            <pre id="statusContent"></pre>
+        </div>
+    </div>
+
+    <script>
+        // Function to update attack status on the webpage
+        function updateAttackStatus() {
+            fetch('/attack/status/<key>')
+                .then(response => response.json())
+                .then(data => {
+                    const attackStatusDiv = document.getElementById('statusContent');
+                    attackStatusDiv.innerText = JSON.stringify(data, null, 2);
+                })
+                .catch(error => console.error('Error fetching attack status:', error));
+        }
+
+        // Function to handle form submission
+        document.getElementById('attackForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const host = document.getElementById('host').value;
+            const time = document.getElementById('time').value;
+            const method = document.getElementById('method').value;
+            fetch(`/attack/start/<key>/${host}/${time}/${method}`)
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.status);  // You can customize this alert or use other UI components
+                })
+                .catch(error => console.error('Error starting attack:', error));
+        });
+
+        // Polling for attack status every 5 seconds (adjust as needed)
+        setInterval(updateAttackStatus, 5000);
+    </script>
+</body>
+</html>
